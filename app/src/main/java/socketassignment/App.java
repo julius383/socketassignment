@@ -3,12 +3,119 @@
  */
 package socketassignment;
 
-public class App {
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+
+public class App extends Application {
     public String getGreeting() {
         return "Hello World!";
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        primaryStage.setTitle("Home Page");
+        buildForm(primaryStage);
+        primaryStage.show();
+    }
+
+    private void buildForm(Stage primaryStage) throws FileNotFoundException {
+        GridPane gridPane = new GridPane();
+        gridPane.setAlignment(Pos.TOP_CENTER);
+        gridPane.setHgap(20);
+        gridPane.setVgap(10);
+        gridPane.setPadding(new Insets(25, 25, 25, 25));
+
+        File source = new File("./socket.png");
+        Image image = new Image(new FileInputStream(source));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(200);
+        imageView.setFitHeight(150);
+        HBox imageContainer = new HBox(10);
+        imageContainer.setAlignment(Pos.CENTER);
+        imageContainer.getChildren().add(imageView);
+        gridPane.add(imageContainer, 0, 0, 4, 1);
+
+        Label firstNameLabel = new Label("First Name");
+        gridPane.add(firstNameLabel, 0, 1);
+        Label lastNameLabel = new Label("Last Name");
+        gridPane.add(lastNameLabel, 1, 1);
+
+        TextField firstNameField = new TextField();
+        gridPane.add(firstNameField, 0, 2);
+
+        TextField lastNameField = new TextField();
+        gridPane.add(lastNameField, 1, 2);
+
+        Label admissionNoLabel = new Label("Admission No.");
+        gridPane.add(admissionNoLabel, 0, 3);
+
+        TextField admissionNoField = new TextField();
+        gridPane.add(admissionNoField, 0, 4);
+
+        Label facultyLabel = new Label("Faculty");
+        gridPane.add(facultyLabel, 1, 3);
+
+        ComboBox<String> facultyComboBox = new ComboBox<String>(getFacultiesList());
+        gridPane.add(facultyComboBox, 1, 4);
+
+        Label degreeLabel = new Label("Degree");
+        gridPane.add(degreeLabel, 0, 5);
+
+        ComboBox<String> degreeComboBox = new ComboBox<String>(getDegreesList());
+        gridPane.add(degreeComboBox, 0, 6);
+
+        Label coursesLabel = new Label("Courses");
+        gridPane.add(coursesLabel, 1, 5);
+
+        ComboBox<String> facultiesComboBox = new ComboBox<String>(getCoursesList());
+        gridPane.add(facultiesComboBox, 1, 6);
+
+        Label messageLabel = new Label("Message");
+        gridPane.add(messageLabel, 0, 7);
+
+        TextField messageField = new TextField();
+        gridPane.add(messageField, 0, 8, 2, 1);
+
+        Button submitBtn = new Button("Submit");
+        HBox submitBtnBox = new HBox(10);
+        submitBtnBox.setAlignment(Pos.CENTER);
+        submitBtnBox.getChildren().add(submitBtn);
+        gridPane.add(submitBtnBox, 0, 9, 2, 1);
+
+        Scene scene = new Scene(gridPane, 640, 500);
+        primaryStage.setScene(scene);
+    }
+
+    private ObservableList<String> getFacultiesList() {
+        return FXCollections.observableArrayList("Select Faculty", "FIT", "SCES", "LLB", "SHM", "CIPIT");
+    }
+
+    private ObservableList<String> getDegreesList() {
+        return FXCollections.observableArrayList("Select Degree", "FIT", "SCES", "LLB", "SHM", "CIPIT");
+    }
+
+    private ObservableList<String> getCoursesList() {
+        return FXCollections.observableArrayList("Select Course", "FIT", "SCES", "LLB", "SHM", "CIPIT");
     }
 }

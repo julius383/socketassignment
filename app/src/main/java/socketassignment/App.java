@@ -8,15 +8,22 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -98,6 +105,7 @@ public class App extends Application {
         gridPane.add(messageField, 0, 8, 2, 1);
 
         Button submitBtn = new Button("Submit");
+        submitBtn.setOnAction(showFailureDialog());
         HBox submitBtnBox = new HBox(10);
         submitBtnBox.setAlignment(Pos.CENTER);
         submitBtnBox.getChildren().add(submitBtn);
@@ -117,5 +125,53 @@ public class App extends Application {
 
     private ObservableList<String> getCoursesList() {
         return FXCollections.observableArrayList("Select Course", "FIT", "SCES", "LLB", "SHM", "CIPIT");
+    }
+
+    private EventHandler<ActionEvent> showSuccessDialog() {
+        return new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent event) {
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Sent successfully");
+                alert.setHeaderText(null);
+                alert.setContentText("Content was sent successfully");
+                alert.showAndWait();
+            }
+        };
+    }
+
+    private EventHandler<ActionEvent> showFailureDialog() {
+        return new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent event) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Unable to send");
+                alert.setHeaderText(null);
+                alert.setContentText("Content failed to send");
+
+                ButtonType retryButtonType = new ButtonType("Retry");
+                ButtonType cancelButtonType = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(retryButtonType, cancelButtonType);
+
+                // Add timeout to simulate sending the request
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(2000);
+                            System.out.println("Done");
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                alert.showAndWait();
+                            }
+                        });
+                    }
+                });
+                thread.start();
+
+            }
+        };
     }
 }
